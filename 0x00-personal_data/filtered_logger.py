@@ -6,6 +6,14 @@ import logging
 import re
 from typing import List
 
+PII_FIELDS = [
+    "name",
+    "email",
+    "phone",
+    "ssn",
+    "ip"
+]
+
 p = {
     'cap': lambda x, y: r'(?P<field>{})=[^{}]*'.format(x, y),
     'rep': lambda x: r'\g<field>={}'.format(x)
@@ -44,3 +52,22 @@ class RedactingFormatter(logging.Formatter):
         record.msg = filter_datum(
             self.pii_fields, self.REDACTION, record.msg, self.SEPARATOR)
         return super().format(record)
+
+
+def get_logger() -> logging.Logger:
+    """Builds a logger"""
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+
+    # add handler
+    stream_handler = logging.StreamHandler()
+    logger.addHandler(stream_handler)
+
+    # add formatter to all handlers
+    formatter = RedactingFormatter(PII_FIELDS)
+    if logger.hasHandlers():
+        for handler in logger.handlers:
+            handler.setFormatter(formatter)
+
+    return logger
