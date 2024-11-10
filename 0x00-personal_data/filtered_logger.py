@@ -106,6 +106,7 @@ def main():
     for row in cursor:
         log = "; ".join([f'{k}={v}' for k, v in zip(fields, row)])
         logger.info(log)
+    cursor.close()
 
 if __name__ == '__main__':
     main()
