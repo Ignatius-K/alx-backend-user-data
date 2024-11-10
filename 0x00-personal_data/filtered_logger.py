@@ -2,8 +2,10 @@
 
 """Module defines logger"""
 
+import mysql.connector
 import logging
 import re
+import os
 from typing import Iterable, List
 
 PII_FIELDS = (
@@ -71,3 +73,14 @@ def get_logger() -> logging.Logger:
             handler.setFormatter(formatter)
 
     return logger
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """Creates connection to user-data db"""
+    connection = mysql.connector.MySQLConnection(
+        host=os.getenv("PERSONAL_DATA_DB_HOST", "localhost"),
+        user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
+        password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
+        database=os.getenv("PERSONAL_DATA_DB_NAME")
+    )
+    return connection
