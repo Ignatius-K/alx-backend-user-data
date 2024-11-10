@@ -6,7 +6,10 @@ import mysql.connector
 import logging
 import re
 import os
-from typing import Iterable, List
+from typing import Iterable, List, cast
+
+from mysql.connector import logger
+from mysql.connector.connection import MySQLConnection
 
 PII_FIELDS = (
     "name",
@@ -77,11 +80,32 @@ def get_logger() -> logging.Logger:
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """Creates connection to user-data db"""
-    connection = mysql.connector.connection.MySQLConnection(
+    connection = mysql.connector.connect(
         host=os.getenv("PERSONAL_DATA_DB_HOST", "localhost"),
         user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
         password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
         database=os.getenv("PERSONAL_DATA_DB_NAME", ""),
         port=3306
     )
-    return connection
+    return cast(MySQLConnection, connection)
+
+
+def main():
+    """Connects to db and gets user records"""
+    connection = get_db()
+    logger = get_logger()
+    if connection is None:
+        return
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users;")
+
+    desc = cursor.description
+    fields = []
+    if isinstance(desc, List):
+        fields = [field[0] for field in desc]
+    for row in cursor:
+        log = "; ".join([f'{k}={v}' for k, v in zip(fields, row)])
+        logger.info(log)
+
+if __name__ == '__main__':
+    main()
