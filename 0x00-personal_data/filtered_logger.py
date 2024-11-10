@@ -2,6 +2,7 @@
 
 """Module defines logger"""
 
+import logging
 import re
 from typing import List
 
@@ -20,15 +21,26 @@ def filter_datum(
     return re.sub(capture, replace, message)
 
 
-# pattern = r'(?<==).*'
+class RedactingFormatter(logging.Formatter):
+    """RedactingFormatter
+    Formats the logs to hide sensitive information
 
-# def filter_datum(
-#     fields: List[str], redaction: str,
-#     message: str, separator: str
-# ) -> str:
-#     split_message = message.split(sep=separator)[: -1]
-#     for index, datum in enumerate(split_message):
-#         if re.findall(r'^.+(?==)', datum)[0] in fields:
-#             split_message[index] = re.sub(pattern=pattern,
-# repl=redaction, string=datum)
-#     return separator.join(split_message)
+    Attributes:
+        REDACTION: The string to replace sensitive info with
+        FORMAT: The format of the log
+        SEPARATOR: The string that separates the data in log
+    """
+
+    REDACTION = "****"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    SEPARATOR = ";"
+
+    def __init__(self, fields: List[str]) -> None:
+        super(RedactingFormatter, self).__init__(self.FORMAT)
+        self.pii_fields = fields
+
+    def format(self, record: logging.LogRecord) -> str:
+        """Formats message to hide sensitive data"""
+        record.msg = filter_datum(
+            self.pii_fields, self.REDACTION, record.msg, self.SEPARATOR)
+        return super().format(record)
