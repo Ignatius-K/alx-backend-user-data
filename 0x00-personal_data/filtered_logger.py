@@ -5,7 +5,7 @@
 import mysql.connector
 import logging
 import re
-import os
+from os import environ
 from typing import Iterable, List
 
 PII_FIELDS = (
@@ -74,14 +74,15 @@ def get_logger() -> logging.Logger:
 
     return logger
 
-
 def get_db() -> mysql.connector.connection.MySQLConnection:
-    """Creates connection to user-data db"""
-    connection = mysql.connector.connection.MySQLConnection(
-        host=os.getenv("PERSONAL_DATA_DB_HOST", "localhost"),
-        user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
-        password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
-        database=os.getenv("PERSONAL_DATA_DB_NAME", ""),
-        port=3306
-    )
-    return connection
+    """ Returns a connector to a MySQL database """
+    username = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
+    password = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
+    host = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
+    db_name = environ.get("PERSONAL_DATA_DB_NAME")
+
+    cnx = mysql.connector.connection.MySQLConnection(user=username,
+                                                     password=password,
+                                                     host=host,
+                                                     database=db_name)
+    return cnx
