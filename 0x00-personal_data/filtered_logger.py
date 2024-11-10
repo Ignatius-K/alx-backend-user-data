@@ -31,7 +31,7 @@ class RedactingFormatter(logging.Formatter):
         SEPARATOR: The string that separates the data in log
     """
 
-    REDACTION = "****"
+    REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
