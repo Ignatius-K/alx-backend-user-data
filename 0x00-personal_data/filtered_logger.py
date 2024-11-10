@@ -5,16 +5,17 @@
 import re
 from typing import List
 
-reg = r'(?:{})=(.+?)(?:{})'
+
 
 
 def filter_datum(
-    fields: List, redaction: str, message: str, separator: str
+    fields: List[str], redaction: str, message: str, separator: str
 ) -> str:
     """Filters the data"""
-    r_fields = '|'.join([re.escape(field) for field in fields])
-    data = re.findall(reg.format(r_fields, re.escape(separator)), message)
-    return re.sub(pattern='|'.join(data), repl=redaction, string=message)
+    _fields = '|'.join([re.escape(field) for field in fields])
+    capture = r'(?P<field>{})=[^{}]*'.format(_fields, re.escape(separator))
+    replace = r'\g<field>={}'.format(re.escape(redaction))
+    return re.sub(capture, replace, message)
 
 
 # pattern = r'(?<==).*'
