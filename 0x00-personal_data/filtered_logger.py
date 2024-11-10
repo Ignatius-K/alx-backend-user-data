@@ -4,7 +4,7 @@
 
 import logging
 import re
-from typing import List
+from typing import Iterable, List
 
 PII_FIELDS = (
     "name",
@@ -43,14 +43,14 @@ class RedactingFormatter(logging.Formatter):
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields: List[str]):
+    def __init__(self, fields: Iterable[str]):
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.pii_fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
         """Formats message to hide sensitive data"""
         record.msg = filter_datum(
-            self.pii_fields, self.REDACTION, record.msg, self.SEPARATOR)
+            list(self.pii_fields), self.REDACTION, record.msg, self.SEPARATOR)
         return super().format(record)
 
 
@@ -60,9 +60,14 @@ def get_logger() -> logging.Logger:
     logger.setLevel(logging.INFO)
     logger.propagate = False
 
-    # add handler
+    # define handler
     stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(RedactingFormatter(PII_FIELDS))
     logger.addHandler(stream_handler)
+
+    # add redaction Formatter
+    formatter = RedactingFormatter(PII_FIELDS)
+    if logger.hasHandlers():
+        for handler in logger.handlers:
+            handler.setFormatter(formatter)
 
     return logger
