@@ -62,12 +62,7 @@ def get_logger() -> logging.Logger:
 
     # add handler
     stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(RedactingFormatter(PII_FIELDS))
     logger.addHandler(stream_handler)
-
-    # add formatter to all handlers
-    formatter = RedactingFormatter(PII_FIELDS)
-    if logger.hasHandlers():
-        for handler in logger.handlers:
-            handler.setFormatter(formatter)
 
     return logger
