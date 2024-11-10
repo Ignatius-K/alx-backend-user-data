@@ -6,13 +6,13 @@ import logging
 import re
 from typing import List
 
-PII_FIELDS = [
+PII_FIELDS = (
     "name",
     "email",
     "phone",
     "ssn",
-    "ip"
-]
+    "password"
+)
 
 p = {
     'cap': lambda x, y: r'(?P<field>{})=[^{}]*'.format(x, y),
