@@ -3,11 +3,14 @@
 """Module defines logger"""
 
 import re
+from typing import List
 
 reg = r'(?:{})=(.+?)(?:{})'
 
 
-def filter_datum(fields=[], redaction="", message="", separator=""):
+def filter_datum(
+    fields: List, redaction: str, message: str, separator: str
+) -> str:
     """Filters the data"""
     r_fields = '|'.join([re.escape(field) for field in fields])
     data = re.findall(reg.format(r_fields, re.escape(separator)), message)
