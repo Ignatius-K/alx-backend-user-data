@@ -21,7 +21,9 @@ class Auth:
         """
         return False
 
-    def authorization_header(self, request: Optional[Request] = None) -> Optional[str]:
+    def authorization_header(
+        self, request: Optional[Request] = None
+    ) -> Optional[str]:
         """Gets the authentication header from the request
         """
         return None
