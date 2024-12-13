@@ -2,7 +2,6 @@
 """Module defines the Authentication implementation
 """
 
-from flask import Request
 from typing import List, Optional, TypeVar
 
 
@@ -20,13 +19,13 @@ class Auth:
         return False
 
     def authorization_header(
-        self, request: Optional[Request] = None
+        self, request=None
     ) -> Optional[str]:
         """Gets the authentication header from the request
         """
         return None
 
-    def current_user(self, request: Optional[Request] = None) -> TypeVar('User'):
+    def current_user(self, request=None) -> TypeVar('User'):
         """Gets the logged in user
         """
         return None
