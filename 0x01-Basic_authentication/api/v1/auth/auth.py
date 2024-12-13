@@ -23,7 +23,10 @@ class Auth:
         Return:
             (bool): True if path doesn't require auth else otherwise
         """
-        if (path is None or excluded_paths is None or not isinstance(excluded_paths, List) or len(excluded_paths) == 0):
+        if (
+                path is None or excluded_paths is None or
+                not isinstance(excluded_paths, List) or len(excluded_paths) == 0
+        ):
             return True
 
         path = path if path.endswith('/') else f'{path}/'
