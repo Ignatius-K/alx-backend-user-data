@@ -5,8 +5,6 @@
 from flask import Request
 from typing import List, Optional, TypeVar
 
-T = TypeVar('T')
-
 
 class Auth:
     """
@@ -28,7 +26,7 @@ class Auth:
         """
         return None
 
-    def current_user(self, request: Optional[Request] = None) -> Optional[T]:
+    def current_user(self, request: Optional[Request] = None) -> TypeVar('User'):
         """Gets the logged in user
         """
         return None
