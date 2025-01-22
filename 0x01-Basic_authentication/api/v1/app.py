@@ -30,6 +30,15 @@ if auth_type:
 
 @app.before_request
 def authenticate_request():
+    """Authenticates a request
+
+    Checks whether the incoming request requires authentication
+    to proceed
+
+    Abort:
+        (401): When autorization header not present
+        (403): When user making request is not authorized
+    """
     if auth is None:
         return
     if not auth.require_auth(request.path, SECURED_PATHS):
